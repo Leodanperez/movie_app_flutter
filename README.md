@@ -1,6 +1,7 @@
 # movie_app
 
-A new Flutter project. movie app
+Este proyecto tiene como objetivo aprender a utilizar peticiones http con DIO usan la libreria de
+- [Lab: Write your first Flutter app](https://api.themoviedb.org/3)
 
 ## Getting Started
 
