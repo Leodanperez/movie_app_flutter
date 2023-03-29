@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:movie_app/constants/style.dart';
+import 'package:movie_app/models/hive_tv_model.dart';
 import 'package:movie_app/models/tv/tv_model.dart';
 import 'package:movie_app/screens/reviews.dart';
 import 'package:movie_app/screens/trailers_screen.dart';
@@ -17,6 +19,14 @@ class TVsDetailsScreen extends StatefulWidget {
 }
 
 class _TVsDetailsScreenState extends State<TVsDetailsScreen> {
+  late Box<HiveTVModel> _tvWatchLists;
+
+  @override
+  void initState() {
+    _tvWatchLists = Hive.box<HiveTVModel>('tv_lists');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +99,18 @@ class _TVsDetailsScreenState extends State<TVsDetailsScreen> {
               child: Container(
                 color: Style.secondColor,
                 child: TextButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    HiveTVModel newValue = HiveTVModel(
+                      id: widget.tvShows.id!,
+                      rating: widget.tvShows.rating!,
+                      name: widget.tvShows.name!,
+                      backDrop: widget.tvShows.backDrop!,
+                      poster: widget.tvShows.poster!,
+                      overview: widget.tvShows.overview!,
+                    );
+                    _tvWatchLists.add(newValue);
+                    _showAlertDialog();
+                  },
                   icon: const Icon(
                     Icons.list_alt_outlined,
                     size: 30,
@@ -135,6 +156,25 @@ class _TVsDetailsScreenState extends State<TVsDetailsScreen> {
                 "https://image.tmdb.org/t/p/w200/${widget.tvShows.poster}"),
             fit: BoxFit.cover),
       ),
+    );
+  }
+
+  void _showAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Added to list'),
+          content:
+          Text("${widget.tvShows.name!} successfully added to watch list"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

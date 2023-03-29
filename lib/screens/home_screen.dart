@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/constants/style.dart';
 import 'package:movie_app/screens/movie_screen.dart';
 import 'package:movie_app/screens/tv_screen.dart';
+import 'package:movie_app/screens/watch_lists_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -25,16 +26,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: _currentIndex != 2 ? AppBar(
         centerTitle: true,
         title: _buildTitle(_currentIndex),
-      ),
+      ) : null,
       body: PageView(
         controller: controller,
         children: const <Widget>[
           MovieScreen(),
           TVsScreen(),
-          Center(child: Text('Watch List', style: TextStyle(color: Style.textColor)),),
+          WatchLists()
+          //Center(child: Text('Watch List', style: TextStyle(color: Style.textColor)),),
         ],
         onPageChanged: (value) {
           setState(() {
@@ -63,8 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return const Text('Movie Shows');
       case 1:
         return const Text('TV Shows');
-      case 2:
-        return const Text('Watch Lists');
+      /*case 2:
+        return null; //return null if navigate to watch list*/
       default:
         return null;
     }

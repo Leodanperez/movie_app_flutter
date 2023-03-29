@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:movie_app/constants/style.dart';
+import 'package:movie_app/models/hive_movie_model.dart';
 import 'package:movie_app/models/movie/movie_model.dart';
 import 'package:movie_app/movie_widgets/movie_info.dart';
 import 'package:movie_app/movie_widgets/similar_movie_widget.dart';
@@ -17,6 +19,14 @@ class MoviesDetailsScreen extends StatefulWidget {
 }
 
 class _MoviesDetailsScreenState extends State<MoviesDetailsScreen> {
+  late Box<HiveMovieModel> _movieWatchLists;
+
+  @override
+  void initState() {
+    _movieWatchLists = Hive.box<HiveMovieModel>('movie_lists');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +99,18 @@ class _MoviesDetailsScreenState extends State<MoviesDetailsScreen> {
               child: Container(
                 color: Style.secondColor,
                 child: TextButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    HiveMovieModel newValue = HiveMovieModel(
+                      id: widget.movie.id!,
+                      rating: widget.movie.rating!,
+                      title: widget.movie.title!,
+                      backDrop: widget.movie.backDrop!,
+                      poster: widget.movie.poster!,
+                      overview: widget.movie.overview!,
+                    );
+                    _movieWatchLists.add(newValue);
+                    _showAlertDialog();
+                  },
                   icon: const Icon(
                     Icons.list_alt_outlined,
                     size: 30,
@@ -135,6 +156,25 @@ class _MoviesDetailsScreenState extends State<MoviesDetailsScreen> {
                 "https://image.tmdb.org/t/p/w200/${widget.movie.poster}"),
             fit: BoxFit.cover),
       ),
+    );
+  }
+
+  void _showAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Added to list'),
+          content:
+              Text("${widget.movie.title!} successfully added to watch list"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
